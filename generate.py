@@ -46,11 +46,11 @@ def main():
 
     with open('tailwindlike.css', mode='w', encoding='utf8') as file:
         xs, sm, md, lg, xl = result
-        file.write(xs)
-        file.write(f'@media(min-width:640px){{{sm}}}')
-        file.write(f'@media(min-width:768px){{{md}}}')
-        file.write(f'@media(min-width:1024px){{{lg}}}')
-        file.write(f'@media(min-width:1280px){{{xl}}}')
+        file.write(f'{xs}\n')
+        file.write(f'@media (min-width:640px) {{\n{sm}\n}}\n')
+        file.write(f'@media (min-width:768px) {{\n{md}\n}}\n')
+        file.write(f'@media (min-width:1024px) {{\n{lg}\n}}\n')
+        file.write(f'@media (min-width:1280px) {{\n{xl}\n}}\n')
 
 
 TAILWIND_NAME = re.compile('[a-z][a-z0-9-./]*[a-z0-9%]')
@@ -106,7 +106,7 @@ def sanitize_css_name(name: str) -> str:
 def css_class(name: str, attributes: List[Tuple[str, str]], size: str = '', selector_extension: str = None) -> str:
     name = all_selectors(name, size, selector_extension)
     attributes = ';'.join(f'{attribute[0]}:{attribute[1]}' for attribute in attributes)
-    return f'{name}{{{attributes}}}'
+    return f'{name}{{{attributes}}}\n'
 
 
 MODIFIERS = {
