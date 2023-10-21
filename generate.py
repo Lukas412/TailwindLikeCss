@@ -4,6 +4,7 @@ from typing import List
 import requests
 from bs4 import BeautifulSoup
 
+
 def main():
     page_names = fetch_all_doc_page_names()
     for page_name in page_names:
