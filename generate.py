@@ -13,12 +13,6 @@ class Style:
     css_attributes: List[Tuple[str, str]]
     css_selector_extension: Optional[str] = None
 
-    def css_class(self):
-        name = self.tailwind_name if self.css_selector_extension is None \
-            else f'{self.tailwind_name}{self.css_selector_extension}'
-        attributes = ';'.join(f'{attribute[0]}: {attribute[1]}' for attribute in self.css_attributes)
-        return f'.{name}{{{attributes}}}'
-
 
 def main():
     page_names = fetch_all_doc_page_names()
@@ -43,7 +37,12 @@ def main():
         print()
 
     with open('tailwindlike.css', mode='w', encoding='utf8') as file:
-        file.writelines(map(Style.css_class, styles))
+        result = ''.join(css_class(style.tailwind_name,
+                                   style.css_attributes,
+                                   selector_extension=style.css_selector_extension)
+                         for style in styles)
+        file.write(result)
+        file.write('\n')
 
 
 TAILWIND_NAME = re.compile('[a-z][a-z0-9-./]*[a-z0-9%]')
@@ -90,6 +89,41 @@ def fetch_page(name: str) -> BeautifulSoup:
 
 def is_comment(text: str) -> bool:
     return text.startswith('/*') and text.endswith('*/')
+
+
+def sanitize_css_name(name: str) -> str:
+    return name.replace('/', '\\/').replace('%', '\\%').replace('.', '\\.').replace(':', '\\:')
+
+
+def css_class(name: str, attributes: List[Tuple[str, str]], size: str = '', selector_extension: str = None) -> str:
+    name = all_selectors(name, size, selector_extension)
+    attributes = ';'.join(f'{attribute[0]}:{attribute[1]}' for attribute in attributes)
+    return f'{name}{{{attributes}}}'
+
+
+MODIFIERS = {
+    '': '',
+    'hover:': ':hover',
+    'focus:': ':focus',
+    'active:': ':active',
+    # 'first:': ':first-child',
+    # 'last:': ':last-child',
+    # 'required:': ':required',
+    # 'invalid:': ':invalid',
+    # 'disabled:': ':disabled'
+}
+
+
+def all_selectors(name: str, size: Optional[str], selector_extension: Optional[str]) -> str:
+    size = size or ''
+    selector_extension = '' if selector_extension is None else ' ' + selector_extension
+
+    modifiers = {'': '', 'hover:': ':hover', 'focus:': ':focus', 'active:': ':active', 'first:': ':first-child',
+                 'last:': ':last-child', 'required:': ':required', 'invalid:': ':invalid', 'disabled:': ':disabled'}
+    selectors = ['.' + sanitize_css_name(size + modifier_name + name) + modifier_pseudo + selector_extension
+                 for modifier_name, modifier_pseudo in modifiers.items()]
+
+    return ','.join(selectors)
 
 
 if __name__ == '__main__':
