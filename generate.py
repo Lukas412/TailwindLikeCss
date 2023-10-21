@@ -36,13 +36,21 @@ def main():
 
         print()
 
+    result = tuple(
+        ''.join(css_class(style.tailwind_name,
+                          style.css_attributes,
+                          size=size,
+                          selector_extension=style.css_selector_extension)
+                for style in styles)
+        for size in (None, 'sm', 'md', 'lg', 'xl'))
+
     with open('tailwindlike.css', mode='w', encoding='utf8') as file:
-        result = ''.join(css_class(style.tailwind_name,
-                                   style.css_attributes,
-                                   selector_extension=style.css_selector_extension)
-                         for style in styles)
-        file.write(result)
-        file.write('\n')
+        xs, sm, md, lg, xl = result
+        file.write(xs)
+        file.write(f'@media(min-width:640px){{{sm}}}')
+        file.write(f'@media(min-width:768px){{{md}}}')
+        file.write(f'@media(min-width:1024px){{{lg}}}')
+        file.write(f'@media(min-width:1280px){{{xl}}}')
 
 
 TAILWIND_NAME = re.compile('[a-z][a-z0-9-./]*[a-z0-9%]')
