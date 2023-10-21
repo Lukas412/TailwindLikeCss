@@ -42,7 +42,7 @@ def main():
                           size=size,
                           selector_extension=style.css_selector_extension)
                 for style in styles)
-        for size in (None, 'sm', 'md', 'lg', 'xl'))
+        for size in (None, 'sm:', 'md:', 'lg:', 'xl:'))
 
     with open('tailwindlike.css', mode='w', encoding='utf8') as file:
         xs, sm, md, lg, xl = result
