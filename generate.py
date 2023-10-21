@@ -118,10 +118,8 @@ def all_selectors(name: str, size: Optional[str], selector_extension: Optional[s
     size = size or ''
     selector_extension = '' if selector_extension is None else ' ' + selector_extension
 
-    modifiers = {'': '', 'hover:': ':hover', 'focus:': ':focus', 'active:': ':active', 'first:': ':first-child',
-                 'last:': ':last-child', 'required:': ':required', 'invalid:': ':invalid', 'disabled:': ':disabled'}
     selectors = ['.' + sanitize_css_name(size + modifier_name + name) + modifier_pseudo + selector_extension
-                 for modifier_name, modifier_pseudo in modifiers.items()]
+                 for modifier_name, modifier_pseudo in MODIFIERS.items()]
 
     return ','.join(selectors)
 
