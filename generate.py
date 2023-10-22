@@ -15,14 +15,18 @@ class Style:
 
 
 def main():
-    page_names = fetch_all_doc_page_names()
+    page_names = sorted({
+        'display',
+        'margin',
+        'padding',
+        'flex',
+        'align-items',
+        'justify-content',
+    })
     styles = []
 
+    print(page_names)
     for page_name in page_names:
-        if page_name in ('animation',):
-            print(f'skipping page {page_name}')
-            continue
-
         print(f'fetching page {page_name}')
         page = fetch_page(page_name)
 
